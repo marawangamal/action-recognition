@@ -1,5 +1,7 @@
 import os
+import os.path as osp
 import pandas as pd
+import pickle
 
 
 def get_labels_txt(root, ext, half=False):
@@ -59,8 +61,38 @@ def get_files_list(top_level_root, ext):
     file_names_list = []
     for root, dirs, files in os.walk(top_level_root):
         for file_name in files:
-            if ext in files:
+            if ext in file_name:
                 roots_list.append(root)
                 file_names_list.append(file_name)
 
     return roots_list, file_names_list
+
+
+def save_obj(obj, filepath):
+    with open(filepath, 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+
+def load_obj(filepath):
+    with open(filepath, 'rb') as f:
+        return pickle.load(f)
+
+
+def save_to_txt(iterator, out_filepath, separator=' '):
+    """Saves iterator to ``out_filepath`` txt file
+
+    Args:
+        iterator (List[str], List[List[str]], Tuple[Tuple[str]]):
+        out_filepath (str): e.g. path\to\textfile.txt
+        separator (str):
+
+    Returns:
+
+    """
+    with open(out_filepath, 'w') as f:
+        for row in iterator:
+            if isinstance(row, list) or isinstance(row, tuple):
+                row = separator.join(row)
+            f.write(row)
+            f.write('\n')
+
